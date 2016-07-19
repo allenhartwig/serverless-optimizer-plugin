@@ -286,9 +286,13 @@ module.exports = function(S) {
               deferredCopies = [];
 
           includePaths.forEach(p => {
+            let pathParts = _this.evt.options.pathDist.split('/'),
+                rootPath = pathParts.slice(0, pathParts.indexOf('_meta')).join('/'),
+                srcRoot = _this.function.custom.optimize.includePathsFromRoot ? rootPath : _this.evt.options.pathDist;
+
             let destPath = path.join(_this.optimizedDistPath, p),
-                srcPath  = path.join(_this.evt.options.pathDist, p),
-                destDir  = (fs.lstatSync(p).isDirectory()) ? destPath : path.dirname(destPath);
+                srcPath  = path.join(srcRoot, p),
+                destDir  = (fs.lstatSync(srcPath).isDirectory()) ? destPath : path.dirname(destPath);
 
             fs.mkdirsSync(destDir, '0777');
             deferredCopies.push(
